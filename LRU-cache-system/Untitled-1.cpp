@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-// Définition de la structure de chaque nœud de la liste doublement chaînée
 typedef struct Node {
     int key;
     int value;
@@ -10,22 +8,19 @@ typedef struct Node {
     struct Node* next;
 } Node;
 
-// Définition de la structure LRU Cache
 typedef struct {
-    int capacity;        // Capacité maximale du cache
-    int size;            // Taille actuelle du cache
-    Node* head;          // Pointeur vers la tête de la liste
-    Node* tail;          // Pointeur vers la fin de la liste
-    Node** hash_table;   // Table de hachage pour un accès rapide
-    int hash_size;       // Taille de la table de hachage
+    int capacity;       
+    int size;           
+    Node* head;          
+    Node* tail;         
+    Node** hash_table;   
+    int hash_size;       
 } LRUCache;
 
-// Fonction de hachage simple pour mapper une clé à un index
 int hash_function(int key, int hash_size) {
     return key % hash_size;
 }
 
-// Fonction pour créer un nouveau nœud
 Node* create_node(int key, int value) {
     Node* new_node = (Node*)malloc(sizeof(Node));
     new_node->key = key;
@@ -35,49 +30,39 @@ Node* create_node(int key, int value) {
     return new_node;
 }
 
-// Initialisation de la structure LRU Cache
 LRUCache* lru_cache_create(int capacity) {
     LRUCache* cache = (LRUCache*)malloc(sizeof(LRUCache));
     cache->capacity = capacity;
     cache->size = 0;
     cache->head = NULL;
     cache->tail = NULL;
-    cache->hash_size = capacity * 2;  // Taille de la table de hachage
+    cache->hash_size = capacity * 2; 
     cache->hash_table = (Node**)calloc(cache->hash_size, sizeof(Node*));
     return cache;
 }
 
-// Déplacement d'un nœud en tête de la liste
 void move_to_head(LRUCache* cache, Node* node) {
-    if (cache->head == node) return; // Déjà en tête
-
-    // Déconnexion du nœud
+    if (cache->head == node) return; 
     if (node->prev) node->prev->next = node->next;
     if (node->next) node->next->prev = node->prev;
+    if (node == cache->tail) cache->tail = node->prev; 
 
-    if (node == cache->tail) cache->tail = node->prev; // Mettre à jour la fin si nécessaire
-
-    // Insérer en tête
     node->prev = NULL;
     node->next = cache->head;
     if (cache->head) cache->head->prev = node;
     cache->head = node;
 
-    // Si la liste n'avait qu'un élément, mettre à jour la queue
     if (cache->tail == NULL) cache->tail = node;
 }
 
-// Suppression du nœud de la fin de la liste
 void remove_tail(LRUCache* cache) {
     if (cache->tail == NULL) return;
-
     Node* old_tail = cache->tail;
 
-    // Déconnexion du nœud
     if (old_tail->prev) old_tail->prev->next = NULL;
     cache->tail = old_tail->prev;
 
-    // Suppression de la table de hachage
+    
     int index = hash_function(old_tail->key, cache->hash_size);
     cache->hash_table[index] = NULL;
 
@@ -85,51 +70,43 @@ void remove_tail(LRUCache* cache) {
     cache->size--;
 }
 
-// Récupération de la valeur associée à une clé
 int lru_cache_get(LRUCache* cache, int key) {
     int index = hash_function(key, cache->hash_size);
     Node* node = cache->hash_table[index];
 
-    if (node == NULL) return -1; // Clé non trouvée
+    if (node == NULL) return -1; 
 
-    // Déplacer le nœud en tête de la liste
+
     move_to_head(cache, node);
     return node->value;
 }
 
-// Ajout ou mise à jour d'une paire clé-valeur
 void lru_cache_put(LRUCache* cache, int key, int value) {
     int index = hash_function(key, cache->hash_size);
     Node* node = cache->hash_table[index];
 
     if (node != NULL) {
-        // Mise à jour de la valeur existante
         node->value = value;
         move_to_head(cache, node);
     } else {
-        // Ajouter un nouveau nœud
         Node* new_node = create_node(key, value);
 
         if (cache->size == cache->capacity) {
-            // Supprimer l'élément le moins récemment utilisé
             remove_tail(cache);
         }
 
-        // Ajouter en tête de la liste
+       
         new_node->next = cache->head;
         if (cache->head) cache->head->prev = new_node;
         cache->head = new_node;
 
-        // Mettre à jour la queue si nécessaire
         if (cache->tail == NULL) cache->tail = new_node;
-
-        // Ajouter à la table de hachage
         cache->hash_table[index] = new_node;
         cache->size++;
     }
 }
 
-// Libération de la mémoire utilisée par le cache
+
 void lru_cache_free(LRUCache* cache) {
     Node* current = cache->head;
     while (current != NULL) {
@@ -141,22 +118,22 @@ void lru_cache_free(LRUCache* cache) {
     free(cache);
 }
 
-// Test de l'implémentation
+
 int main() {
-    LRUCache* cache = lru_cache_create(2); // Capacité : 2
+    LRUCache* cache = lru_cache_create(2); 
 
     lru_cache_put(cache, 1, 1);
     lru_cache_put(cache, 2, 2);
-    printf("Get 1: %d\n", lru_cache_get(cache, 1)); // Renvoie 1
+    printf("Get 1: %d\n", lru_cache_get(cache, 1)); 
 
-    lru_cache_put(cache, 3, 3); // Supprime (2,2)
-    printf("Get 2: %d\n", lru_cache_get(cache, 2)); // Renvoie -1 (non trouvé)
+    lru_cache_put(cache, 3, 3); 
+    printf("Get 2: %d\n", lru_cache_get(cache, 2)); 
 
-    lru_cache_put(cache, 4, 4); // Supprime (1,1)
-    printf("Get 1: %d\n", lru_cache_get(cache, 1)); // Renvoie -1 (non trouvé)
-    printf("Get 3: %d\n", lru_cache_get(cache, 3)); // Renvoie 3
-    printf("Get 4: %d\n", lru_cache_get(cache, 4)); // Renvoie 4
+    lru_cache_put(cache, 4, 4); 
+    printf("Get 1: %d\n", lru_cache_get(cache, 1)); 
+    printf("Get 3: %d\n", lru_cache_get(cache, 3)); 
+    printf("Get 4: %d\n", lru_cache_get(cache, 4)); 
 
-    lru_cache_free(cache); // Libération de la mémoire
+    lru_cache_free(cache);
     return 0;
 }
