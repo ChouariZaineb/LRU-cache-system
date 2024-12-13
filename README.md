@@ -47,6 +47,7 @@ The implementation uses a **doubly linked list** and a **hash table** to achieve
   - `Get(Key)`: `O(1)` (constant time for lookup and reordering).
 - **Space Complexity**: `O(n)` (to store `n` key-value pairs).
 - **Advantage**: Optimal performance for real-time systems due to constant time complexity for both operations.
+  
    so for that we chose the second one because this design ensures that both operations—retrieval and insertion/updating—run in constant time, making it ideal for real-time applications where speed is critical.     The combination of a hash table for quick lookups and a doubly linked list for maintaining order is the most efficient and commonly used approach for implementing an LRU Cache.
 
 ## Solution Description
