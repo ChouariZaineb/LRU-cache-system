@@ -84,12 +84,12 @@ The implementation uses a **doubly linked list** and a **hash table** to achieve
 
 2. Compile the code:
    ```bash
-   gcc -o lru_cache lru_cache.c
+   gcc -o waywa waywa.c
    ```
 
 3. Run the executable:
    ```bash
-   ./lru_cache
+   ./waywa
    ```
 
 ### Example Usage
