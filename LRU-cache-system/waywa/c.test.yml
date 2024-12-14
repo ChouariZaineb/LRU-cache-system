@@ -1,0 +1,27 @@
+name: C Automated Testing
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install GCC
+      run: sudo apt-get update && sudo apt-get install -y gcc
+
+    - name: Compile Code
+      run: gcc -o yua_program YUA.C
+
+    - name: Run Program
+      run: ./yua_program < test_data.txt > actual_output.txt
+
+    - name: Verify Output
+      run: diff actual_output.txt expected_output.txt
