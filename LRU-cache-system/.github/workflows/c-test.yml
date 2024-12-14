@@ -3,7 +3,7 @@ name: C Automated Testing
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
 
 jobs:
@@ -18,10 +18,10 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y gcc
 
     - name: Compile Code
-      run: gcc -o yua_program YUA.C
+      run: gcc -o yua_program waywa.c
 
     - name: Run Program
       run: ./yua_program < test_data.txt > actual_output.txt
 
     - name: Verify Output
-      run: diff actual_output.txt expected_output.txt
+      run: diff actual_output.txt expected_outputs.txt
