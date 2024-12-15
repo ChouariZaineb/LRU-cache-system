@@ -68,6 +68,27 @@ The implementation uses a **doubly linked list** and a **hash table** to achieve
 
 - **Space Complexity**: `O(n)` for storing `n` key-value pairs in the hash table and doubly linked list.
 
+## Why HashMap Access is O(1) and When It Can Be O(n)
+
+### Why HashMap Access is O(1)
+HashMaps achieve `O(1)` average-time complexity for accessing elements by using a **hashing mechanism**. When a key is provided:
+1. The hash function computes an index in constant time based on the key.
+2. The value is retrieved directly from the computed index in the underlying array.
+
+This direct addressing ensures that both insertion and retrieval are efficient and independent of the size of the HashMap.
+
+### When HashMap Access Can Be O(n)
+In certain scenarios, the time complexity can degrade to `O(n)`. This happens when there are **hash collisions**, where multiple keys are mapped to the same index due to limitations in the hash function. In such cases:
+1. The HashMap stores all colliding keys at the same index, typically using a linked list or a balanced tree.
+2. To retrieve the correct value, the HashMap must search through all keys stored at that index.
+   - If a linked list is used, the search time is proportional to the number of colliding keys, resulting in `O(n)` complexity.
+   - If a balanced tree is used, the complexity is reduced to `O(log n)` for retrieval.
+
+### How to Mitigate Collisions
+1. **Use a Good Hash Function**: A well-designed hash function minimizes collisions by distributing keys uniformly.
+2. **Rehashing**: When the load factor (ratio of the number of elements to the size of the hash table) exceeds a threshold, the HashMap expands and redistributes elements to reduce collisions.
+
+In summary, while HashMaps offer `O(1)` average-case performance, their efficiency depends on the quality of the hash function and how collisions are handled.
 
 
 ---
@@ -104,3 +125,18 @@ lRUCacheFree(cache);                 // Free the cache
 ```
 
 ---
+## GitHub Actions Summary
+
+This repository includes a custom **GitHub Action** workflow to automate code quality checks and testing for the LRU Cache implementation. The workflow is defined in the `.github/workflows/main.yml` file and performs the following tasks:
+
+1. **Code Compilation**:
+   - Verifies that the code compiles successfully using GCC.
+
+2. **Unit Testing**:
+   - Executes a suite of unit tests to validate the correctness of the LRU Cache implementation.
+
+3. **Static Analysis**:
+   - Runs tools like `cppcheck` to ensure code quality and identify potential issues such as memory leaks or undefined behavior.
+
+4. **Cross-Platform Testing**:
+   - Tests the implementation on multiple operating systems (Linux, macOS, and Windows) to ensure compatibility
