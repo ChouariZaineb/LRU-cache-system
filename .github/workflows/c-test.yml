@@ -20,8 +20,18 @@ jobs:
     - name: Compile Code
       run: gcc -o yua_program waywa.c
 
-    - name: Run Program
-      run: ./yua_program < test_data.txt > actual_output.txt
+    - name: Run Program and Measure Time
+      run: |
+        start_time=$(date +%s)
+        ./yua_program < test_data.txt > actual_output.txt
+        end_time=$(date +%s)
+        elapsed_time=$((end_time - start_time))
+        echo "Test execution time: ${elapsed_time} seconds"
 
     - name: Verify Output
-      run: diff actual_output.txt expected_outputs.txt
+      run: |
+        if ! diff actual_output.txt expected_outputs.txt; then
+          echo "Test failed: Output does not match expected results."
+          exit 1
+        fi
+
