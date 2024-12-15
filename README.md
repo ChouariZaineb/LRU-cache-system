@@ -127,7 +127,7 @@ lRUCacheFree(cache);                 // Free the cache
 ---
 ## GitHub Actions Summary
 
-This repository includes a custom **GitHub Action** workflow to automate code quality checks and testing for the LRU Cache implementation. The workflow is defined in the `.github/workflows/main.yml` file and performs the following tasks:
+This repository includes a custom **GitHub Action** workflow to automate code quality checks and testing for the LRU Cache implementation. The workflow is defined in the `.github/workflows/c-test.yml` file and performs the following tasks:
 
 1. **Code Compilation**:
    - Verifies that the code compiles successfully using GCC.
